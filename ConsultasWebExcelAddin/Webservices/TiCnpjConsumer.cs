@@ -9,6 +9,7 @@ namespace ConsultasWebExcelAddin
 
     public class TiCnpjConsumer
     {
+        //"https://cnpj.midialoop.com.br/empresas";
         private static string wsUrlBase = "http://localhost:8080/empresas";
         private static string wsUrlGetOneCnpj = wsUrlBase + "/cnpj/";
         private static string wsUrlGetMultiCnpj = wsUrlBase + "/cnpjs/";
