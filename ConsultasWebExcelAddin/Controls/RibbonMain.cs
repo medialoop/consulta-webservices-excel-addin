@@ -32,7 +32,7 @@ namespace ConsultasWebExcelAddin
                 Excel.Worksheet currentSheet = Globals.ThisAddIn.getActiveWorksheet();
                 Excel.Range currentCell = Globals.ThisAddIn.getCurrentCell();
                 string cnpjValue = Convert.ToString(currentCell.Value2);
-
+ 
 
                 if (cnpjValue is null)
                 {
