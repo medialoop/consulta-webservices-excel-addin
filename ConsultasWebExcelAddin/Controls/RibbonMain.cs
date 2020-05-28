@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using ConsultasWebExcelAddin.wsCorreios;
 using ConsultasWebExcelAddin.WebService;
 using Microsoft.Office.Interop.Excel;
+using System.Threading.Tasks;
 
 namespace ConsultasWebExcelAddin
 {
@@ -21,7 +22,16 @@ namespace ConsultasWebExcelAddin
 
         private void btnConsultaCNPJSCelulas_Click(object sender, RibbonControlEventArgs e)
         {
-            BuscaCnpjFromWs();
+            DialogResult dialogResult = MessageBox.Show("Está operação preenche as 36 colunas imediatamente depois dos CNPJs selecionados, deseja continuar?",
+                                                        "Está operação não é reversível",
+                                                        MessageBoxButtons.YesNo);
+
+            if (dialogResult == DialogResult.No)
+            {
+                return;
+            }
+
+            Task.Run(() => BuscaCnpjFromWs());
         }
 
         private void BuscaCnpjFromWs()
@@ -41,15 +51,6 @@ namespace ConsultasWebExcelAddin
                     {
                        cnpjs.Add(cellCnpj.Value2.ToString());
                     }
-                }
-
-                DialogResult dialogResult = MessageBox.Show("Está operação não é reversível", 
-                                                            "Está operação preenche as 36 colunas imediatamente depois dos CNPJs selecionados, deseja continuar?", 
-                                                            MessageBoxButtons.YesNo);
-
-                if (dialogResult == DialogResult.No)
-                {
-                    return;
                 }
 
                 DadosCnpj = TiCnpjConsumer.getFullDataByCnpj(cnpjs);
@@ -115,7 +116,7 @@ namespace ConsultasWebExcelAddin
 
         private void btnBuscarCEPCelulas_Click(object sender, RibbonControlEventArgs e)
         {
-            BuscaCEPFromCorreioWs();
+            Task.Run(() => BuscaCEPFromCorreioWs());
         }
 
         private void BuscaCEPFromCorreioWs()
