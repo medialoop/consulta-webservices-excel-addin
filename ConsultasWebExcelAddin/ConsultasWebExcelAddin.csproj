@@ -166,12 +166,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
-    <Compile Include="Controls\AboutBox1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controls\AboutBox1.Designer.cs">
-      <DependentUpon>AboutBox1.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -183,9 +177,6 @@
     </Compile>
     <Compile Include="Webservices\CorreiosConsumer.cs" />
     <Compile Include="Webservices\TiCnpjConsumer.cs" />
-    <EmbeddedResource Include="Controls\AboutBox1.resx">
-      <DependentUpon>AboutBox1.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

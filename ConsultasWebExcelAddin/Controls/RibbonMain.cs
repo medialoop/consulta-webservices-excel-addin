@@ -8,6 +8,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 using System.Text.RegularExpressions;
 using ConsultasWebExcelAddin.wsCorreios;
 using ConsultasWebExcelAddin.WebService;
+using Microsoft.Office.Interop.Excel;
 
 namespace ConsultasWebExcelAddin
 {
@@ -20,29 +21,83 @@ namespace ConsultasWebExcelAddin
 
         private void btnConsultaCNPJSCelulas_Click(object sender, RibbonControlEventArgs e)
         {
-            this.BuscaCnpjFromWs();
+            BuscaCnpjFromWs();
         }
 
         private void BuscaCnpjFromWs()
         {
             try
             {
-                dynamic DadosCnpj;
+                List<dynamic> DadosCnpj;
 
-                Excel.Worksheet currentSheet = Globals.ThisAddIn.getActiveWorksheet();
-                Excel.Range currentCell = Globals.ThisAddIn.getCurrentCell();
-                string cnpjValue = Convert.ToString(currentCell.Value2);
- 
+                Worksheet currentSheet = Globals.ThisAddIn.getActiveWorksheet();
+                Range currentCell = Globals.ThisAddIn.getCurrentCell();
+                Range currentSeleciton = Globals.ThisAddIn.getSelectedRange();
+                List<string> cnpjs = new List<string>();
 
-                if (cnpjValue is null)
+                foreach (Range cellCnpj in Globals.ThisAddIn.getSelectedRange())
                 {
-                    throw new System.Exception("Selecione um campo contendo um CNPJ válido");
+                    if (cellCnpj.Value2 != null)
+                    {
+                       cnpjs.Add(cellCnpj.Value2.ToString());
+                    }
                 }
 
-                DadosCnpj = TiCnpjConsumer.getFullDataByCnpj(cnpjValue);
+                DialogResult dialogResult = MessageBox.Show("Está operação não é reversível", 
+                                                            "Está operação preenche as 36 colunas imediatamente depois dos CNPJs selecionados, deseja continuar?", 
+                                                            MessageBoxButtons.YesNo);
 
-                currentSheet.Cells[currentCell.Row, currentCell.Column + 1] = DadosCnpj.razao_social;
-                currentSheet.Cells[currentCell.Row, currentCell.Column + 2] = DadosCnpj.nome_fantasia;
+                if (dialogResult == DialogResult.No)
+                {
+                    return;
+                }
+
+                DadosCnpj = TiCnpjConsumer.getFullDataByCnpj(cnpjs);
+
+                int cRow = currentCell.Column;
+
+                foreach (dynamic dados in DadosCnpj)
+                {
+                    int cColumn = currentCell.Column;
+
+                    currentSheet.Cells[cRow, ++cColumn] = dados.matriz_filial;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.razao_social;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.nome_fantasia;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.situacao;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.data_situacao;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.motivo_situacao;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.nm_cidade_exterior;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.cod_pais;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.nome_pais;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.cod_nat_juridica;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.data_inicio_ativ;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.cnae_fiscal;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.tipo_logradouro;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.logradouro;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.numero;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.complemento;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.bairro;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.cep;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.uf;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.municipio;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.ddd_1;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.telefone_1;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.ddd_2;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.telefone_2;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.ddd_fax;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.num_fax;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.email;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.qualif_resp;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.porte;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.opc_simples;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.data_opc_simples;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.data_exc_simples;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.opc_mei;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.sit_especial;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.data_sit_especial;
+                    currentSheet.Cells[cRow, ++cColumn] = dados.capital_social;
+                    cRow++;
+                }
 
             }
             catch (System.Net.WebException ex)
@@ -59,6 +114,11 @@ namespace ConsultasWebExcelAddin
 
 
         private void btnBuscarCEPCelulas_Click(object sender, RibbonControlEventArgs e)
+        {
+            BuscaCEPFromCorreioWs();
+        }
+
+        private void BuscaCEPFromCorreioWs()
         {
             try
             {
@@ -90,9 +150,8 @@ namespace ConsultasWebExcelAddin
             }
             catch (System.Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ocorreu um erro ao buscar informação do CEP: "+ex.Message, MessageBoxButtons.OK);
+                MessageBox.Show(ex.Message, "Ocorreu um erro ao buscar informação do CEP: " + ex.Message, MessageBoxButtons.OK);
             }
-
         }
     }
 }
